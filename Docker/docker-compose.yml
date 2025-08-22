@@ -1,0 +1,14 @@
+services:
+  mindful-motion:
+    image: 487148038595.dkr.ecr.eu-west-2.amazonaws.com/mindful-motion-v2:latest
+    build:
+      context: ..                 
+      dockerfile: Docker/Dockerfile
+      platforms:
+        - linux/amd64 #for ecs
+    ports:
+      - "3000:3000"
+    env_file:
+      - ../.env
+    restart: unless-stopped
+
