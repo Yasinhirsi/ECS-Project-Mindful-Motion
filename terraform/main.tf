@@ -137,9 +137,10 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4_2" {
 
 
 
-//----------PHASE 2, IAM ROLES ------------//
 
-// ECS Execution Role (allows ECS to pull images and write logs)
+
+// ECS Execution Role 
+// this allows ECS to pull images and write logs
 resource "aws_iam_role" "ecs_execution_role" {
   name = "ecs-execution-role"
 
@@ -161,13 +162,13 @@ resource "aws_iam_role" "ecs_execution_role" {
   }
 }
 
-// Attach the AWS managed policy for ECS task execution
+// Excecution Role
 resource "aws_iam_role_policy_attachment" "ecs_execution" {
   role       = aws_iam_role.ecs_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-// ECS Task Role (gives your application permissions)
+// ECS Task Role 
 resource "aws_iam_role" "ecs_task_role" {
   name = "ecs-task-role"
 
@@ -242,9 +243,9 @@ resource "aws_lb_target_group" "alb-tg-M" {
   protocol    = "HTTP"
   vpc_id      = aws_vpc.mindful-motion-vpc-M.id
 
-  health_check { //FROM OLD CODE
+  health_check {
     path                = "/"
-    matcher             = "200-399" # accept 3xx from Next.js
+    matcher             = "200-399" #
     interval            = 30
     timeout             = 5
     healthy_threshold   = 2
@@ -258,20 +259,51 @@ resource "aws_lb_target_group" "alb-tg-M" {
 //REDIRECT ACTION TO REDIRECT PORT 80 TRAFFIC TO PORT 443 (HTTP>HTTPS) AFTER I ADD CERT, HTTP FOR NOW!!
 
 //http traffic
-resource "aws_lb_listener" "HTTP" {
+# resource "aws_lb_listener" "HTTP" {
+#   load_balancer_arn = aws_lb.mindful-motion-lb.arn
+#   port              = "80"
+#   protocol          = "HTTP"
+
+#   default_action { //change default action to REDIRECT after ACM part
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.alb-tg-M.arn
+#   }
+
+# }
+
+
+//redirect http traffic to https
+resource "aws_lb_listener" "http-redirect" {
   load_balancer_arn = aws_lb.mindful-motion-lb.arn
   port              = "80"
   protocol          = "HTTP"
 
-  default_action { //change default action to REDIRECT after ACM part
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.alb-tg-M.arn
-  }
+  default_action {
+    type = "redirect"
 
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
 }
+
 
 //# HTTPS listener (443) with ACM cert -> forward to TG add this later!!!!
 
+resource "aws_lb_listener" "HTTPS" {
+  load_balancer_arn = aws_lb.mindful-motion-lb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = data.aws_acm_certificate.cert.arn //avoid using hardcoded ARN
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.alb-tg-M.arn
+  }
+}
 
 
 
@@ -344,7 +376,7 @@ resource "aws_ecs_service" "mindful-service-M" {
   task_definition = aws_ecs_task_definition.mindful_motion_task-M.arn
   desired_count   = 1
   launch_type     = "FARGATE"
-  depends_on      = [aws_lb_listener.HTTP] //ensures alb is created first.
+  depends_on      = [aws_lb_listener.HTTPS] //ensures alb is created first.
 
 
   network_configuration {
@@ -364,6 +396,9 @@ resource "aws_ecs_service" "mindful-service-M" {
 
 
 
-
-
-
+//ACM  //data block as cert already exists
+data "aws_acm_certificate" "cert" {
+  domain      = "tm.yasinhirsi.com"
+  statuses    = ["ISSUED"]
+  most_recent = true
+}
