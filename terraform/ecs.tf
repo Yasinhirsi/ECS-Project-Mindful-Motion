@@ -94,3 +94,5 @@ resource "aws_ecs_service" "mindful-service-M" {
 
 
 }
+
+

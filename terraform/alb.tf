@@ -90,7 +90,7 @@ resource "aws_lb_listener" "HTTPS" {
   port              = var.https_port
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = data.aws_acm_certificate.cert.arn //avoid using hardcoded ARN
+  certificate_arn   = data.aws_acm_certificate.cert.arn // data. to avoid using hardcoded ARN
 
   default_action {
     type             = "forward"
