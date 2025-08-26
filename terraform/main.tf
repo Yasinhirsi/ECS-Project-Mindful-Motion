@@ -24,3 +24,72 @@ module "security_groups" {
   allow_all_cidr = var.allow_all_cidr
 
 }
+
+module "alb" {
+  source = "./modules/alb"
+
+  //pass needed things from vpc module
+  vpc_id     = module.vpc.vpc_id
+  subnet1_id = module.vpc.subnet1_id
+  subnet2_id = module.vpc.subnet2_id
+
+  //pass sg id from sg module
+  security_group_id_alb = module.security_groups.security_group_id_alb
+
+
+  app_port   = var.app_port
+  http_port  = var.http_port
+  https_port = var.https_port
+
+  alb_name                         = var.alb_name
+  alb_tg_name                      = var.alb_tg_name
+  health_check_healthy_threshold   = var.health_check_healthy_threshold
+  health_check_interval            = var.health_check_interval
+  health_check_matcher             = var.health_check_matcher
+  health_check_unhealthy_threshold = var.health_check_unhealthy_threshold
+  health_check_path                = var.health_check_path
+  health_check_timeout             = var.health_check_timeout
+  environment_tag                  = var.environment_tag
+
+  certificate_arn = data.aws_acm_certificate.cert.arn
+}
+
+
+
+module "ecs" {
+  source = "./modules/ecs"
+
+
+
+
+
+
+
+  //module calls needed
+  target_group_arn      = module.alb.target_group_arn
+  ecs_security_group_id = module.security_groups.ecs_security_group_id
+  subnet1_id            = module.vpc.subnet1_id
+  subnet2_id            = module.vpc.subnet2_id
+
+
+
+  app_port = var.app_port
+
+
+
+  log_days                      = var.log_days
+  aws_region                    = var.aws_region
+  logstream_prefix              = var.logstream_prefix
+  next_public_supabase_anon_key = var.next_public_supabase_anon_key
+  next_public_supabase_url      = var.next_public_supabase_url
+  ecs_cluster_name              = var.ecs_cluster_name
+  task_definition_cpu           = var.task_definition_cpu
+  task_definition_family        = var.task_definition_family
+  task_definition_memory        = var.task_definition_memory
+  log_group_name                = var.log_group_name
+  container_image               = var.container_image
+  container_image_name          = var.container_image_name
+  ecs_service_name              = var.ecs_service_name
+  desired_count                 = var.desired_count
+
+}

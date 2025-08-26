@@ -77,26 +77,64 @@ resource "aws_ecs_service" "mindful-service-M" {
   #   desired_count   = 1
   desired_count = var.desired_count
   launch_type   = "FARGATE"
-  depends_on    = [aws_lb_listener.HTTPS] //ensures alb is created first.
 
+  # depends_on    = [aws_lb_listener.HTTPS] //ensures alb is created first.
+  #   depends_on = [module.alb.https_listener_arn] //module reference before ecs module created
+  //change
 
   network_configuration {
     # subnets          = [aws_subnet.public-subnet-1-M.id, aws_subnet.public-subnet-2-M.id] //old reference
 
-    subnets = [module.vpc.subnet1_id, module.vpc.subnet2_id]
+    subnets = [var.subnet1_id, var.subnet2_id]
 
     # security_groups  = [aws_security_group.ecs_sg.id] //old rf
-    security_groups  = [module.security_groups.ecs_security_group_id]
+    # security_groups = [module.security_groups.ecs_security_group_id]
+    security_groups = [var.ecs_security_group_id]
+
     assign_public_ip = true
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.alb-tg-M.arn
-    container_name   = var.container_image_name
-    container_port   = var.app_port
+    # target_group_arn = aws_lb_target_group.alb-tg-M.arn //module reference before ecs module created
+    # target_group_arn = module.alb.target_group_arn
+    target_group_arn = var.target_group_arn
+
+    container_name = var.container_image_name
+    container_port = var.app_port
   }
 
 
 }
+
+
+// ECS Execution Role 
+// this allows ECS to pull images and write logs
+resource "aws_iam_role" "ecs_execution_role" {
+  name = "ecs-execution-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name = "ecs-execution-role"
+  }
+}
+
+// Excecution Role
+resource "aws_iam_role_policy_attachment" "ecs_execution" {
+  role       = aws_iam_role.ecs_execution_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
 
 
