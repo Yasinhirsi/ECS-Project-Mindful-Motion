@@ -1,20 +1,24 @@
-//vpc outputs 
-output "vpc_id" {
-  value = aws_vpc.mindful-motion-vpc-M.id
-}
+# //vpc outputs 
+# output "vpc_id" {
+#   value = aws_vpc.mindful-motion-vpc-M.id
+# }
 
-output "igw_id" {
-  value = aws_internet_gateway.igw-mindful-M.id
-}
+# output "igw_id" {
+#   value = aws_internet_gateway.igw-mindful-M.id
+# }
 
-output "subnet1_id" {
-  value = aws_subnet.public-subnet-1-M.id
-}
+# output "subnet1_id" {
+#   value = aws_subnet.public-subnet-1-M.id
+# }
 
-output "subnet2_id" {
-  value = aws_subnet.public-subnet-2-M.id
-}
+# output "subnet2_id" {
+#   value = aws_subnet.public-subnet-2-M.id
+# }
 
+# //for routing config
+# output "route_table_id" {
+#   value = aws_route_table.mindful-motion-rt-M.id
+# }
 //IAM outputs 
 
 output "ecs_execution_role_arn" {
@@ -34,9 +38,9 @@ output "alb_name" {
   value = aws_lb.mindful-motion-lb.name
 }
 
-output "security_group_id_alb" {
-  value = aws_security_group.alb_sg.id
-}
+# output "security_group_id_alb" {
+#   value = aws_security_group.alb_sg.id
+# }
 
 output "aws_lb_target_group_name" {
   value = aws_lb_target_group.alb-tg-M.name
@@ -93,7 +97,7 @@ output "aws_ecs_cluster_id" {
 }
 
 output "ecs_service_arn" {
-  value = aws_ecs_service.mindful-service-M.arn
+  value = aws_ecs_service.mindful-service-M.id //ecs service doesnt have arn attribute so use id instead
 }
 
 output "task_definition_arn" {
@@ -101,18 +105,15 @@ output "task_definition_arn" {
 }
 
 
-//i missed these manually 
+# //i missed these manually 
 
-//to know which sg ecs task use 
-output "ecs_security_group_id" {
-  value = aws_security_group.ecs_sg.id
-}
+# //to know which sg ecs task use 
+# output "ecs_security_group_id" {
+#   value = aws_security_group.ecs_sg.id
+# }
 
-output "ecs_security_group_name" {
-  value = aws_security_group.ecs_sg.name
-}
+# output "ecs_security_group_name" {
+#   value = aws_security_group.ecs_sg.name
+# }
 
-//for routing config
-output "route_table_id" {
-  value = aws_route_table.mindful-motion-rt-M.id
-}
+

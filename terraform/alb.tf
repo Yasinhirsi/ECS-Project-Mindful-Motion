@@ -5,8 +5,14 @@ resource "aws_lb" "mindful-motion-lb" {
   name               = var.alb_name
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [aws_subnet.public-subnet-1-M.id, aws_subnet.public-subnet-2-M.id]
+
+  # security_groups    = [aws_security_group.alb_sg.id] old reference 
+
+  security_groups = [module.security_groups.security_group_id_alb]
+
+  # subnets            = [aws_subnet.public-subnet-1-M.id, aws_subnet.public-subnet-2-M.id] //old reference
+
+  subnets = [module.vpc.subnet1_id, module.vpc.subnet2_id]
 
   enable_deletion_protection = false
 
@@ -25,7 +31,9 @@ resource "aws_lb_target_group" "alb-tg-M" {
   #   port        = 3000 //port the app runs on
   port     = var.app_port
   protocol = "HTTP"
-  vpc_id   = aws_vpc.mindful-motion-vpc-M.id
+
+  # vpc_id   = aws_vpc.mindful-motion-vpc-M.id //old reference
+  vpc_id = module.vpc.vpc_id
 
   health_check {
     # path                = "/"

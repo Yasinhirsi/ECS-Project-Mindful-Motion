@@ -81,8 +81,12 @@ resource "aws_ecs_service" "mindful-service-M" {
 
 
   network_configuration {
-    subnets          = [aws_subnet.public-subnet-1-M.id, aws_subnet.public-subnet-2-M.id]
-    security_groups  = [aws_security_group.ecs_sg.id]
+    # subnets          = [aws_subnet.public-subnet-1-M.id, aws_subnet.public-subnet-2-M.id] //old reference
+
+    subnets = [module.vpc.subnet1_id, module.vpc.subnet2_id]
+
+    # security_groups  = [aws_security_group.ecs_sg.id] //old rf
+    security_groups  = [module.security_groups.ecs_security_group_id]
     assign_public_ip = true
   }
 
