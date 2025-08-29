@@ -32,3 +32,6 @@ terraform/*.tfvars
 terraform/*.tfvars.json
 terraform/terraform.tfvars
 terraform/.terraform.lock.hcl
+
+# Notes and documentation
+notes/

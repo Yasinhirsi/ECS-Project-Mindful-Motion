@@ -1,6 +1,7 @@
+version: '3.8'
+
 services:
   mindful-motion:
-    image: 487148038595.dkr.ecr.eu-west-2.amazonaws.com/mindful-motion-v2:latest
     build:
       context: ..                 
       dockerfile: Docker/Dockerfile
@@ -11,4 +12,3 @@ services:
     env_file:
       - ../.env
     restart: unless-stopped
-

@@ -22,11 +22,14 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  output: 'standalone',
   experimental: {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
+    staticPageGenerationTimeout: 0,
   },
+  generateStaticParams: false,
 }
 
 if (userConfig) {
