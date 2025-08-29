@@ -27,9 +27,7 @@ const nextConfig = {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
-    staticPageGenerationTimeout: 0,
   },
-  generateStaticParams: false,
 }
 
 if (userConfig) {
