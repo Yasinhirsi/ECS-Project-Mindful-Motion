@@ -8,11 +8,6 @@ yarn-error.log*
 out
 dist
 
-# Environment files
-.env.local
-.env.development
-.env.production
-
 # Development files
 .git
 .gitignore
