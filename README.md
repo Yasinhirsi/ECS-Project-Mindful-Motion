@@ -161,7 +161,7 @@ FROM node:20-alpine AS production
 
 ### Prerequisites
 - **AWS CLI** configured with appropriate credentials
-- **Terraform** 1.12.2 or higher
+- **Terraform** 1.11 or higher (for native s3 locking as dynamoDB no needed anymore)
 - **Docker** and **Docker Compose** for local container testing
 - **Node.js** 18+ for local development
 
