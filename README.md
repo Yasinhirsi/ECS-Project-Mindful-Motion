@@ -5,6 +5,7 @@
 - [🚀 Project Overview](#-project-overview)
 - [✨ Application Features](#-application-features)
 - [🏗️ Infrastructure Overview](#-infrastructure-overview)
+- [🗄️ Terraform State Management](#-terraform-state-management) 
 - [🏛️ Architecture Diagram](#-architecture-diagram)
 - [🔄 CI/CD Pipelines](#-cicd-pipelines)
 - [🐳 Docker Implementation](#-docker-implementation)
@@ -56,6 +57,18 @@
 - **IAM Roles** following AWS best practices
 - **VPC isolation** with proper network segmentation
 - **HTTPS enforcement** with automatic redirects
+
+## 🗄️ Terraform State Management
+
+### Remote Backend Configuration
+- **S3 Backend** for centralized state storage in `eu-west-2`
+- **State encryption** enabled for security compliance
+- **Centralized state management** for team collaboration
+
+### Benefits of Remote State
+- **Team collaboration** without state conflicts
+- **Centralized backup** and disaster recovery
+- **State consistency** across different environments
 
 ## 🏛️ Architecture Diagram
 
@@ -130,7 +143,6 @@ FROM node:20-alpine AS production
 #### 3. Build Efficiency
 - **Dependency layer caching** for faster rebuilds
 - **Context optimization** with `.dockerignore`
-- **Parallel build processes** where possible
 - **Optimized package installation**
 
 ### Image Size Results
@@ -208,7 +220,6 @@ Update `terraform.tfvars` with your values:
 ### Secrets Management
 - **GitHub Secrets** for sensitive configuration
 - **No hardcoded credentials** in code
-- **Environment-specific** configuration
 - **Proper IAM roles** with least privilege
 
 ### Network Security
@@ -221,21 +232,16 @@ Update `terraform.tfvars` with your values:
 - **Non-root users** in containers
 - **Vulnerability scanning** with Trivy
 - **Minimal attack surface** with optimized images
-- **Regular security updates** through CI/CD
 
 ## 📊 Monitoring and Observability
 
 ### CloudWatch Integration
-- **ECS service logs** with structured logging
+- **ECS service logs** with simple logging
 - **Load balancer access logs** for traffic analysis
-- **Custom metrics** for application performance
-- **Log retention** policies for compliance
 
 ### Health Checks
 - **ALB health checks** for service availability
 - **Container health checks** for application status
-- **Automatic failover** across availability zones
-- **Real-time monitoring** of infrastructure health
 
 ## 📞 Support
 
