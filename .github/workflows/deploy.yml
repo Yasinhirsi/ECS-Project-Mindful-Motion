@@ -44,7 +44,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.13.1"
+          terraform_version: "1.12.2"  # Your actual version
       
       - name: Terraform Init
         working-directory: terraform
@@ -54,7 +54,7 @@ jobs:
         if: matrix.tool == 'fmt'
         working-directory: terraform
         run: |
-          echo " Checking Terraform formatting..."
+          echo "�� Checking Terraform formatting..."
           terraform fmt -check -recursive
           echo "✅ Format check passed"
       
@@ -95,7 +95,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.13.1"
+          terraform_version: "1.12.2"  # Your actual version
       
       - name: Terraform Init
         working-directory: terraform
@@ -120,7 +120,7 @@ jobs:
         env:
           TF_VAR_next_public_supabase_anon_key: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
-          if [ "${{ github.event.inputs.auto_approve }}" = "true" ]; then
+          if [ "${{ github.event.inputs.action }}" = "true" ]; then
             echo "🚀 Applying changes with auto-approve..."
             terraform apply -auto-approve tfplan
           else
@@ -151,5 +151,5 @@ jobs:
           echo "🎯 ALB DNS Name:"
           terraform output -raw alb_dns_name
           echo ""
-          echo " Copy this DNS name and update your DNS manually!"
+          echo "�� Copy this DNS name and update your DNS manually!"
           echo "💡 Your app will be accessible at this ALB DNS name"
