@@ -3,11 +3,11 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Accept build arguments for environment variables
+# build args
 ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-# Set environment variables for build (only during build, not in final image)
+# only during build so not baked into image
 ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
@@ -15,10 +15,8 @@ ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 COPY package*.json ./
 RUN npm ci --legacy-peer-deps
 
-# Copy source code
 COPY . .
 
-# Build the application
 RUN npm run build
 
 
@@ -27,7 +25,7 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Create non-root user
+# create non-root user
 RUN adduser -D appuser
 
 # # Copy package files
@@ -40,7 +38,6 @@ COPY --from=builder /app/public ./public
 
 # Switch to non-root user
 USER appuser
-# Health check using busybox wget
 HEALTHCHECK CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
 # Set environment
 ENV NODE_ENV=production
