@@ -1,5 +1,19 @@
 # Mindful Motion - Complete DevOps Infrastructure Project
 
+
+## 📑 Table of Contents
+- [🚀 Project Overview](#-project-overview)
+- [✨ Application Features](#-application-features)
+- [🏗️ Infrastructure Overview](#-infrastructure-overview)
+- [🏛️ Architecture Diagram](#-architecture-diagram)
+- [🔄 CI/CD Pipelines](#-cicd-pipelines)
+- [🐳 Docker Implementation](#-docker-implementation)
+- [🛠️ Local Setup](#-local-setup)
+- [🔐 Security Considerations](#-security-considerations)
+- [📊 Monitoring and Observability](#-monitoring-and-observability)
+- [📞 Support](#-support)
+- [👨‍💻 Author](#-author)
+
 ## 🚀 Project Overview
 
 **Mindful Motion** is a comprehensive DevOps infrastructure project that demonstrates modern cloud architecture, CI/CD practices, and infrastructure automation. This project showcases a production-ready Next.js application deployed on AWS with automated deployment pipelines.
@@ -140,8 +154,8 @@ FROM node:20-alpine AS production
 
 #### 1. Clone and Setup
 ```bash
-git clone (repo url)
-cd mindful-Motion-final
+git clone https://github.com/Yasinhirsi/ECS-Project-Mindful-Motion
+cd ECS-Project-Mindful-Motion
 ```
 
 #### 2. Configure Terraform Variables
@@ -226,3 +240,12 @@ For questions or issues:
 - **Create an issue** in the GitHub repository
 - **Consult architecture** diagram for understanding
 
+
+## 👨‍💻 Author
+
+**Yasin Hirsi**  
+- 🎓 BSc Computer Science (First Class) – Queen Mary University of London  
+- 💼 DevOps Engineer | AWS | Terraform | Docker | CI/CD  | Kubernetes
+- 🌐 [LinkedIn](https://www.linkedin.com/in/yhirsi) • [GitHub](https://github.com/Yasinhirsi) 
+
+If you like this project, consider giving it a ⭐ to support!
