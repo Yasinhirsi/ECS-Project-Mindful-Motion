@@ -20,6 +20,10 @@ on:
         - plan
         - apply
         - destroy
+      confirm_deployment:
+        description: 'Type "DEPLOY" to confirm (required for apply/destroy)'
+        required: false
+        type: string
       auto_approve:
         description: 'Auto-approve changes (use with caution)'
         required: false
@@ -33,6 +37,7 @@ jobs:
   # Matrix job for linting and validation
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
       matrix:
         tool: [fmt, validate, tflint]
@@ -41,7 +46,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      # �� ADD AWS CREDENTIALS HERE TOO!
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -87,6 +91,7 @@ jobs:
   deploy:
     needs: validate
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment: ${{ github.event.inputs.environment }}
     
     steps:
@@ -105,12 +110,24 @@ jobs:
         with:
           terraform_version: "1.12.2"
       
+      - name: Require Manual Confirmation
+        if: github.event.inputs.action == 'apply' || github.event.inputs.action == 'destroy'
+        run: |
+          if [ "${{ github.event.inputs.confirm_deployment }}" != "DEPLOY" ]; then
+            echo "❌ Deployment not confirmed!"
+            echo "Type 'DEPLOY' in the confirm_deployment field to proceed with ${{ github.event.inputs.action }}"
+            echo "This prevents accidental deployments and ensures you're ready to proceed"
+            exit 1
+          fi
+          echo "✅ Deployment confirmed for ${{ github.event.inputs.action }} to ${{ github.event.inputs.environment }}"
+      
       - name: Terraform Init
         working-directory: terraform
         run: terraform init
       
       - name: Terraform Plan
         working-directory: terraform
+        timeout-minutes: 10
         env:
           TF_VAR_next_public_supabase_anon_key: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
@@ -125,6 +142,7 @@ jobs:
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
         working-directory: terraform
+        timeout-minutes: 15
         env:
           TF_VAR_next_public_supabase_anon_key: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
@@ -140,6 +158,7 @@ jobs:
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
         working-directory: terraform
+        timeout-minutes: 15
         env:
           TF_VAR_next_public_supabase_anon_key: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
@@ -161,3 +180,12 @@ jobs:
           echo ""
           echo " Copy this DNS name and update your DNS manually!"
           echo "💡 Your app will be accessible at this ALB DNS name"
+      
+      - name: Cleanup on Failure
+        if: failure()
+        working-directory: terraform
+        run: |
+          echo "🧹 Workflow failed, attempting cleanup..."
+          echo "Attempting to force unlock state if locked..."
+          terraform force-unlock -force || echo "No lock to unlock or unlock failed"
+          echo "Cleanup completed"
