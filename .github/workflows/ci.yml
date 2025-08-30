@@ -45,5 +45,5 @@ jobs:
           image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
           format: 'sarif'
           output: 'trivy-results.sarif'
-          exit-code: '0'  # Don't fail build on vulnerabilities
+          exit-code: '0'  # Don't fail build 
 

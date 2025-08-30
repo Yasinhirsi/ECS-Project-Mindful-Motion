@@ -1,0 +1,88 @@
+name: Deploy Infrastructure
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+        - plan
+        - apply
+        - destroy
+
+env:
+  AWS_REGION: eu-west-2
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5.0"
+      
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+      
+      - name: Terraform Validate
+        working-directory: terraform
+        run: terraform validate
+      
+      - name: Install and Run TFLint
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+          tflint --init --chdir=terraform
+          tflint --chdir=terraform
+      
+      - name: Terraform Plan
+        working-directory: terraform
+        run: |
+          if [ "${{ github.event.inputs.action }}" = "destroy" ]; then
+            terraform plan -destroy -out=tfplan
+          else
+            terraform plan -out=tfplan
+          fi
+      
+      - name: Terraform Apply
+        if: github.event.inputs.action == 'apply'
+        working-directory: terraform
+        run: terraform apply -auto-approve tfplan
+      
+      - name: Terraform Destroy
+        if: github.event.inputs.action == 'destroy'
+        working-directory: terraform
+        run: terraform destroy -auto-approve
+      
+      - name: Output ALB DNS
+        if: github.event.inputs.action == 'apply'
+        working-directory: terraform
+        run: |
+          echo " ALB DNS Name:"
+          terraform output -raw alb_dns_name
+          echo ""
+          echo "Copy this DNS name and update your DNS manually!"
