@@ -68,24 +68,24 @@ jobs:
         run: |
           echo " Checking Terraform formatting..."
           terraform fmt -check -recursive
-          echo "✅ Format check passed"
+          echo "Format check passed"
       
       - name: Terraform Validate
         if: matrix.tool == 'validate'
         working-directory: terraform
         run: |
-          echo "🔍 Validating Terraform configuration..."
+          echo " Validating Terraform configuration..."
           terraform validate
-          echo "✅ Configuration validation passed"
+          echo "Configuration validation passed"
       
       - name: Install and Run TFLint
         if: matrix.tool == 'tflint'
         run: |
-          echo "🔍 Installing and running TFLint..."
+          echo "Installing and running TFLint..."
           curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
           tflint --init --chdir=terraform
           tflint --chdir=terraform
-          echo "✅ TFLint security checks completed"
+          echo "TFLint security checks completed"
 
   # Main deployment job
   deploy:
@@ -114,12 +114,12 @@ jobs:
         if: github.event.inputs.action == 'apply' || github.event.inputs.action == 'destroy'
         run: |
           if [ "${{ github.event.inputs.confirm_deployment }}" != "DEPLOY" ]; then
-            echo "❌ Deployment not confirmed!"
+            echo "Deployment not confirmed!"
             echo "Type 'DEPLOY' in the confirm_deployment field to proceed with ${{ github.event.inputs.action }}"
             echo "This prevents accidental deployments and ensures you're ready to proceed"
             exit 1
           fi
-          echo "✅ Deployment confirmed for ${{ github.event.inputs.action }} to ${{ github.event.inputs.environment }}"
+          echo "Deployment confirmed for ${{ github.event.inputs.action }} to ${{ github.event.inputs.environment }}"
       
       - name: Terraform Init
         working-directory: terraform
@@ -132,10 +132,10 @@ jobs:
           TF_VAR_next_public_supabase_anon_key: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
           if [ "${{ github.event.inputs.action }}" = "destroy" ]; then
-            echo "🗑️ Generating destroy plan..."
+            echo "Generating destroy plan..."
             terraform plan -destroy -out=tfplan -input=false
           else
-            echo "📋 Generating apply plan..."
+            echo "Generating apply plan..."
             terraform plan -out=tfplan -input=false
           fi
       
@@ -147,13 +147,13 @@ jobs:
           TF_VAR_next_public_supabase_anon_key: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
           if [ "${{ github.event.inputs.auto_approve }}" = "true" ]; then
-            echo "🚀 Applying changes with auto-approve..."
+            echo "Applying changes with auto-approve..."
             terraform apply -auto-approve tfplan
           else
-            echo "🚀 Applying changes..."
+            echo "Applying changes..."
             terraform apply tfplan
           fi
-          echo "✅ Infrastructure deployment completed successfully"
+          echo "Infrastructure deployment completed successfully"
       
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
@@ -163,29 +163,29 @@ jobs:
           TF_VAR_next_public_supabase_anon_key: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
           if [ "${{ github.event.inputs.auto_approve }}" = "true" ]; then
-            echo "🗑️ Destroying infrastructure with auto-approve..."
+            echo " Destroying infrastructure with auto-approve..."
             terraform destroy -auto-approve
           else
-            echo "🗑️ Destroying infrastructure..."
+            echo " Destroying infrastructure..."
             terraform destroy
           fi
-          echo "✅ Infrastructure destruction completed"
+          echo " Infrastructure destruction completed"
       
       - name: Output ALB DNS
         if: github.event.inputs.action == 'apply'
         working-directory: terraform
         run: |
-          echo "🎯 ALB DNS Name:"
+          echo "ALB DNS Name:"
           terraform output -raw alb_dns_name
           echo ""
           echo " Copy this DNS name and update your DNS manually!"
-          echo "💡 Your app will be accessible at this ALB DNS name"
+          
       
       - name: Cleanup on Failure
         if: failure()
         working-directory: terraform
         run: |
-          echo "🧹 Workflow failed, attempting cleanup..."
+          echo " Workflow failed, attempting cleanup..."
           echo "Attempting to force unlock state if locked..."
           terraform force-unlock -force || echo "No lock to unlock or unlock failed"
           echo "Cleanup completed"
