@@ -20,12 +20,64 @@ on:
         - plan
         - apply
         - destroy
+      auto_approve:
+        description: 'Auto-approve changes (use with caution)'
+        required: false
+        default: false
+        type: boolean
 
 env:
   AWS_REGION: eu-west-2
 
 jobs:
+  # Matrix job for linting and validation
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        tool: [fmt, validate, tflint]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.13.1"
+      
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+      
+      - name: Terraform Format Check
+        if: matrix.tool == 'fmt'
+        working-directory: terraform
+        run: |
+          echo " Checking Terraform formatting..."
+          terraform fmt -check -recursive
+          echo "✅ Format check passed"
+      
+      - name: Terraform Validate
+        if: matrix.tool == 'validate'
+        working-directory: terraform
+        run: |
+          echo "🔍 Validating Terraform configuration..."
+          terraform validate
+          echo "✅ Configuration validation passed"
+      
+      - name: Install and Run TFLint
+        if: matrix.tool == 'tflint'
+        run: |
+          echo "🔍 Installing and running TFLint..."
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+          tflint --init --chdir=terraform
+          tflint --chdir=terraform
+          echo "✅ TFLint security checks completed"
+
+  # Main deployment job
   deploy:
+    needs: validate
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
     
@@ -43,46 +95,61 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.12.2"
+          terraform_version: "1.13.1"
       
       - name: Terraform Init
         working-directory: terraform
         run: terraform init
       
-      - name: Terraform Validate
-        working-directory: terraform
-        run: terraform validate
-      
-      - name: Install and Run TFLint
-        run: |
-          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-          tflint --init --chdir=terraform
-          tflint --chdir=terraform
-      
       - name: Terraform Plan
         working-directory: terraform
+        env:
+          TF_VAR_next_public_supabase_anon_key: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: |
           if [ "${{ github.event.inputs.action }}" = "destroy" ]; then
-            terraform plan -destroy -out=tfplan
+            echo "🗑️ Generating destroy plan..."
+            terraform plan -destroy -out=tfplan -input=false
           else
-            terraform plan -out=tfplan
+            echo "📋 Generating apply plan..."
+            terraform plan -out=tfplan -input=false
           fi
       
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
         working-directory: terraform
-        run: terraform apply -auto-approve tfplan
+        env:
+          TF_VAR_next_public_supabase_anon_key: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          if [ "${{ github.event.inputs.auto_approve }}" = "true" ]; then
+            echo "🚀 Applying changes with auto-approve..."
+            terraform apply -auto-approve tfplan
+          else
+            echo "🚀 Applying changes..."
+            terraform apply tfplan
+          fi
+          echo "✅ Infrastructure deployment completed successfully"
       
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
         working-directory: terraform
-        run: terraform destroy -auto-approve
+        env:
+          TF_VAR_next_public_supabase_anon_key: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          if [ "${{ github.event.inputs.auto_approve }}" = "true" ]; then
+            echo "🗑️ Destroying infrastructure with auto-approve..."
+            terraform destroy -auto-approve
+          else
+            echo "🗑️ Destroying infrastructure..."
+            terraform destroy
+          fi
+          echo "✅ Infrastructure destruction completed"
       
       - name: Output ALB DNS
         if: github.event.inputs.action == 'apply'
         working-directory: terraform
         run: |
-          echo " ALB DNS Name:"
+          echo "🎯 ALB DNS Name:"
           terraform output -raw alb_dns_name
           echo ""
-          echo "Copy this DNS name and update your DNS manually!"
+          echo " Copy this DNS name and update your DNS manually!"
+          echo "💡 Your app will be accessible at this ALB DNS name"
