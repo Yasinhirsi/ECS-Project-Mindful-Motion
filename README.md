@@ -27,6 +27,9 @@
 - **Responsive Design** optimized for mobile and desktop
 - **Real-time Updates** with modern web technologies
 
+### 🎥 App Demo
+📹 **[Watch the App Features Demo](https://www.loom.com/share/cccc2c4bc8b44cf6a21888e03bd8baa1?sid=b28e5686-b5d7-46fc-883e-2d9f0a5a568e)** - See the daily check-in system, facial emotion analysis, and other features in action!
+
 ### Technical Stack
 - **Frontend:** Next.js 15, React, TypeScript
 - **AI/ML:** TensorFlow.js, Face API for emotion detection
