@@ -35,3 +35,9 @@ terraform/.terraform.lock.hcl
 
 # Notes and documentation
 notes/
+
+# Images (screenshots and visual documentation)
+images/*.png
+images/*.jpg
+images/*.jpeg
+images/*.gif

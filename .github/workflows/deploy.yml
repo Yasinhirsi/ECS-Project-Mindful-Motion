@@ -179,13 +179,4 @@ jobs:
           terraform output -raw alb_dns_name
           echo ""
           echo " Copy this DNS name and update your DNS manually!"
-          
-      
-      - name: Cleanup on Failure
-        if: failure()
-        working-directory: terraform
-        run: |
-          echo " Workflow failed, attempting cleanup..."
-          echo "Attempting to force unlock state if locked..."
-          terraform force-unlock -force || echo "No lock to unlock or unlock failed"
-          echo "Cleanup completed"
+          echo " Your app will be accessible at this ALB DNS name"

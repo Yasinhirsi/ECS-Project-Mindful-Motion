@@ -29,10 +29,6 @@ output "task_definition_arn" {
   value = aws_ecs_task_definition.mindful_motion_task-M.arn
 }
 
-# output "https_listener_arn" {
-#   value = aws_lb_listener.HTTPS.arn
-# }
-
 
 //IAM outputs 
 

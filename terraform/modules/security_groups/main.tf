@@ -1,15 +1,8 @@
 // Security Group for ALB (allows http and https)
 
 resource "aws_security_group" "alb_sg" {
-  #   name   = "alb_sg"
-  name = var.alb_sg_name
-
-  # vpc_id = aws_vpc.mindful-motion-vpc-M.id //old reference
-
-  #   vpc_id = module.vpc.vpc_id  // you cant reference a module insdie a module anymore, so create a new var
-
+  name   = var.alb_sg_name
   vpc_id = var.vpc_id
-
 
   tags = {
     Name = var.alb_sg_name
@@ -18,11 +11,10 @@ resource "aws_security_group" "alb_sg" {
 
 resource "aws_vpc_security_group_ingress_rule" "http" {
   security_group_id = aws_security_group.alb_sg.id
-  #   cidr_ipv4         = "0.0.0.0/0"
-  cidr_ipv4   = var.allow_all_cidr
-  from_port   = var.http_port //80
-  ip_protocol = "tcp"
-  to_port     = var.http_port
+  cidr_ipv4         = var.allow_all_cidr
+  from_port         = var.http_port //80
+  ip_protocol       = "tcp"
+  to_port           = var.http_port
 }
 
 //HTTPS RULE
@@ -45,12 +37,7 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
 //ECS SECURITY GROUP allows traffic from alb
 
 resource "aws_security_group" "ecs_sg" {
-  name = var.ecs_sg_name
-
-  # vpc_id = aws_vpc.mindful-motion-vpc-M.id //old reference
-
-  #   vpc_id = module.vpc.vpc_id //old module reference
-
+  name   = var.ecs_sg_name
   vpc_id = var.vpc_id
 
 

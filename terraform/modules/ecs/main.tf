@@ -2,15 +2,12 @@
 
 //ecs cluster 
 resource "aws_ecs_cluster" "mindful_motion_ecs-M" {
-  #   name = "mindful_motion_ecs-M"
   name = var.ecs_cluster_name
 
 }
 
 //cloudwatch log group 
 resource "aws_cloudwatch_log_group" "cw_log_group" {
-  #   name              = "cw_log_group"
-  #   retention_in_days = 7
   name              = var.log_group_name
   retention_in_days = var.log_days
 }
@@ -19,7 +16,6 @@ resource "aws_cloudwatch_log_group" "cw_log_group" {
 //task def
 
 resource "aws_ecs_task_definition" "mindful_motion_task-M" {
-  #   family                   = "mindful_motion_task-M"
   family                   = var.task_definition_family
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
@@ -32,8 +28,6 @@ resource "aws_ecs_task_definition" "mindful_motion_task-M" {
   //from old code*
   container_definitions = jsonencode([
     {
-      #   name  = "mindful-motion-app"
-      #   image = "487148038595.dkr.ecr.eu-west-2.amazonaws.com/mindful-motion-v2:latest"
       name  = var.container_image_name
       image = var.container_image
 
@@ -69,38 +63,24 @@ resource "aws_ecs_task_definition" "mindful_motion_task-M" {
 // ecs service 
 
 resource "aws_ecs_service" "mindful-service-M" {
-  #   name            = "mindful-service-M"
   name = var.ecs_service_name
 
   cluster         = aws_ecs_cluster.mindful_motion_ecs-M.id
   task_definition = aws_ecs_task_definition.mindful_motion_task-M.arn
-  #   desired_count   = 1
-  desired_count = var.desired_count
-  launch_type   = "FARGATE"
-
-  # depends_on    = [aws_lb_listener.HTTPS] //ensures alb is created first.
-  #   depends_on = [module.alb.https_listener_arn] //module reference before ecs module created
-  //change
+  desired_count   = var.desired_count
+  launch_type     = "FARGATE"
 
   network_configuration {
-    # subnets          = [aws_subnet.public-subnet-1-M.id, aws_subnet.public-subnet-2-M.id] //old reference
 
-    subnets = [var.subnet1_id, var.subnet2_id]
-
-    # security_groups  = [aws_security_group.ecs_sg.id] //old rf
-    # security_groups = [module.security_groups.ecs_security_group_id]
-    security_groups = [var.ecs_security_group_id]
-
+    subnets          = [var.subnet1_id, var.subnet2_id]
+    security_groups  = [var.ecs_security_group_id]
     assign_public_ip = true
   }
 
   load_balancer {
-    # target_group_arn = aws_lb_target_group.alb-tg-M.arn //module reference before ecs module created
-    # target_group_arn = module.alb.target_group_arn
     target_group_arn = var.target_group_arn
-
-    container_name = var.container_image_name
-    container_port = var.app_port
+    container_name   = var.container_image_name
+    container_port   = var.app_port
   }
 
 

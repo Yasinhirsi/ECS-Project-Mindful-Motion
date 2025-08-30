@@ -1,2 +1,78 @@
+# Terraform Variables Example File
+# Copy this file to terraform.tfvars and fill in your actual values
+# DO NOT commit terraform.tfvars to version control
 
+# =============================================================================
+# VPC Configuration
+# =============================================================================
+vpc_cidr = "10.0.0.0/16"
+public_subnet_1_cidr = "10.0.1.0/24"
+public_subnet_1_az = "eu-west-2a"
+public_subnet_2_cidr = "10.0.2.0/24"
+public_subnet_2_az = "eu-west-2b"
+route_table_cidr = "0.0.0.0/0"
+
+# =============================================================================
+# Load Balancer Configuration
+# =============================================================================
+alb_name = "mindful-motion-alb"
+environment_tag = "staging"
+alb_tg_name = "mindful-motion-tg"
+app_port = 3000
+health_check_path = "/"
+health_check_matcher = "200"
+health_check_interval = 30
+health_check_timeout = 5
+health_check_healthy_threshold = 2
+health_check_unhealthy_threshold = 2
+
+# =============================================================================
+# ECS Configuration
+# =============================================================================
+ecs_cluster_name = "mindful-motion-cluster"
+log_group_name = "mindful-motion-logs"
+log_days = 7
+task_definition_family = "mindful-motion-task"
+task_definition_cpu = 256
+task_definition_memory = 512
+container_image_name = "mindful-motion-app"
+container_image = "your-ecr-repo-url:latest"  # Will be set by CI/CD
+aws_region = "eu-west-2"
+logstream_prefix = "ecs"
+ecs_service_name = "mindful-motion-service"
+desired_count = 2
+
+# =============================================================================
+# Application Configuration
+# =============================================================================
+# IMPORTANT: These should be provided via GitHub Secrets in CI/CD
+# next_public_supabase_url = "https://your-project.supabase.co"
+# next_public_supabase_anon_key = "your-anon-key-here"
+
+# =============================================================================
+# Domain and SSL Configuration
+# =============================================================================
+domain_name = "your-domain.com"
+# certificate_arn = "arn:aws:acm:eu-west-2:123456789012:certificate/xxx"  # Optional
+
+# =============================================================================
+# Security Group Configuration
+# =============================================================================
+alb_sg_name = "mindful-motion-alb-sg"
+ecs_sg_name = "mindful-motion-ecs-sg"
+allow_all_cidr = "0.0.0.0/0"
+http_port = 80
+https_port = 443
+
+# =============================================================================
+# Notes:
+# =============================================================================
+# 1. Copy this file to terraform.tfvars
+# 2. Fill in your actual values
+# 3. DO NOT commit terraform.tfvars to Git
+# 4. For production, use GitHub Secrets for sensitive values
+# 5. Update container_image with your actual ECR repository URL
+# 6. Set domain_name to your actual domain
+# 7. Adjust VPC CIDR blocks if needed for your network
+# 8. Modify ECS task CPU/memory based on your application needs
 

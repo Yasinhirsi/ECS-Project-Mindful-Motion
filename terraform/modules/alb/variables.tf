@@ -76,30 +76,30 @@ variable "http_port" {
 variable "vpc_id" {
   description = "VPC ID for ALB"
   type        = string
-  # No default - required from VPC module
+
 }
 
 variable "security_group_id_alb" {
   description = "ALB security group ID"
   type        = string
-  # No default - required from security groups module
+
 }
 
 //needed so i can pass values from vpc module
 variable "subnet1_id" {
   description = "First subnet ID"
   type        = string
-  # No default - required from VPC module
+
 }
 
 variable "subnet2_id" {
   description = "Second subnet ID"
   type        = string
-  # No default - required from VPC module
+
 }
 
 variable "certificate_arn" {
   description = "ACM certificate ARN for HTTPS listener"
   type        = string
-  # No default - required from ACM data source
+
 }

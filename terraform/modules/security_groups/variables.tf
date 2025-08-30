@@ -36,12 +36,6 @@ variable "app_port" {
 variable "vpc_id" {
   description = "VPC ID for security groups"
   type        = string
-  # No default - required from VPC module
+
 }
 
-# http_port      = var.http_port
-#   https_port     = var.http_port
-#   app_port       = var.app_port
-#   alb_sg_name    = var.alb_sg_name
-#   ecs_sg_name    = var.ecs_sg_name
-#   allow_all_cidr = var.allow_all_cidr

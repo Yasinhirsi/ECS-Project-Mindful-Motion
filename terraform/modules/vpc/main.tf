@@ -1,18 +1,15 @@
 
 //VPC
 resource "aws_vpc" "mindful-motion-vpc-M" {
-  #   cidr_block           = "10.0.0.0/16" //can add to tfvars later
-  cidr_block           = var.vpc_cidr //add to variables.tf then add value above to tfvars
+  cidr_block           = var.vpc_cidr
   enable_dns_hostnames = true
   enable_dns_support   = true
 }
 
 // Public Subnet 1
 resource "aws_subnet" "public-subnet-1-M" {
-  vpc_id = aws_vpc.mindful-motion-vpc-M.id
-  #   cidr_block              = "10.0.1.0/24" //add to variables.tf then add value above to tfvars
-  cidr_block = var.public_subnet_1_cidr
-  #   availability_zone       = "eu-west-2a" //tfvars
+  vpc_id                  = aws_vpc.mindful-motion-vpc-M.id
+  cidr_block              = var.public_subnet_1_cidr
   availability_zone       = var.public_subnet_1_az
   map_public_ip_on_launch = true
   tags = {
@@ -22,10 +19,8 @@ resource "aws_subnet" "public-subnet-1-M" {
 
 // Public Subnet 2
 resource "aws_subnet" "public-subnet-2-M" {
-  vpc_id = aws_vpc.mindful-motion-vpc-M.id
-  #   cidr_block              = "10.0.2.0/24" //tfvars
-  cidr_block = var.public_subnet_2_cidr
-  #   availability_zone       = "eu-west-2b" //tfvars
+  vpc_id                  = aws_vpc.mindful-motion-vpc-M.id
+  cidr_block              = var.public_subnet_2_cidr
   availability_zone       = var.public_subnet_2_az
   map_public_ip_on_launch = true
   tags = {
@@ -46,12 +41,11 @@ resource "aws_internet_gateway" "igw-mindful-M" {
 
 //route table
 resource "aws_route_table" "mindful-motion-rt-M" {
-  vpc_id = aws_vpc.mindful-motion-vpc-M.id //tfvars
+  vpc_id = aws_vpc.mindful-motion-vpc-M.id
 
   route {
-    # cidr_block = "0.0.0.0/0"       
-    cidr_block = var.route_table_cidr                  // accept traffic from anywhere
-    gateway_id = aws_internet_gateway.igw-mindful-M.id //tfvars
+    cidr_block = var.route_table_cidr
+    gateway_id = aws_internet_gateway.igw-mindful-M.id
   }
 
 

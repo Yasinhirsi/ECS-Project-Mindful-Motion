@@ -97,25 +97,25 @@ variable "app_port" {
 variable "subnet1_id" {
   description = "First subnet ID"
   type        = string
-  # No default - required from VPC module
+
 }
 
 variable "subnet2_id" {
   description = "Second subnet ID"
   type        = string
-  # No default - required from VPC module
+
 }
 
 
 variable "ecs_security_group_id" {
   description = "ecs sg id"
   type        = string
-  # No default - required from security groups module
+
 }
 
 
 variable "target_group_arn" {
   description = "ARN of alb target group"
   type        = string
-  # No default - required from ALB module
+
 }
