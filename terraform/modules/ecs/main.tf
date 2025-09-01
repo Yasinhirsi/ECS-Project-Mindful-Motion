@@ -40,8 +40,8 @@ resource "aws_ecs_task_definition" "mindful_motion_task-M" {
       ]
 
       environment = [
-        { name = "NEXT_PUBLIC_SUPABASE_URL", value = var.next_public_supabase_url },
-        { name = "NEXT_PUBLIC_SUPABASE_ANON_KEY", value = var.next_public_supabase_anon_key }
+        { name = "NEXT_PUBLIC_SUPABASE_URL", value = var.NEXT_PUBLIC_SUPABASE_URL },
+        { name = "NEXT_PUBLIC_SUPABASE_ANON_KEY", value = var.NEXT_PUBLIC_SUPABASE_ANON_KEY }
       ]
 
       logConfiguration = {

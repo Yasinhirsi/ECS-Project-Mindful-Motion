@@ -68,13 +68,13 @@ variable "desired_count" {
   default     = 1
 }
 
-variable "next_public_supabase_url" {
+variable "NEXT_PUBLIC_SUPABASE_URL" {
   description = "Supabase URL for the application"
   type        = string
   default     = "https://gdrkdhplmgfjjtdtsrkl.supabase.co"
 }
 
-variable "next_public_supabase_anon_key" {
+variable "NEXT_PUBLIC_SUPABASE_ANON_KEY" {
   description = "Supabase anonymous key for the application"
   type        = string
   sensitive   = true

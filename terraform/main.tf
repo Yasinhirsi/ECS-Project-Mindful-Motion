@@ -80,8 +80,8 @@ module "ecs" {
   log_days                      = var.log_days
   aws_region                    = var.aws_region
   logstream_prefix              = var.logstream_prefix
-  next_public_supabase_anon_key = var.next_public_supabase_anon_key
-  next_public_supabase_url      = var.next_public_supabase_url
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = var.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  NEXT_PUBLIC_SUPABASE_URL      = var.NEXT_PUBLIC_SUPABASE_URL
   ecs_cluster_name              = var.ecs_cluster_name
   task_definition_cpu           = var.task_definition_cpu
   task_definition_family        = var.task_definition_family
