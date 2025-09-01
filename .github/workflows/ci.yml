@@ -44,10 +44,9 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ steps.build.outputs.imageid }}
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          format: 'table'  # Show results in table format in logs
           exit-code: '0'  # Temporarily set to 0 to see vulnerability details
-          severity: 'CRITICAL,HIGH' 
+          severity: 'CRITICAL,HIGH'
 
       - name: Push to ECR after successful scan
         if: success()
