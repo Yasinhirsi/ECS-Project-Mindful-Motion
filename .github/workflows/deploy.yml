@@ -91,7 +91,7 @@ jobs:
         run: |
           echo "Running Checkov infrastructure security scan..."
           pip install checkov
-          checkov -d terraform/ --framework terraform --output cli --hard-fail-on CRITICAL
+          checkov -d terraform/ --framework terraform --output table --hard-fail-on CRITICAL
           echo "Checkov security scan completed"
 
   
@@ -136,7 +136,8 @@ jobs:
         working-directory: terraform
         timeout-minutes: 10
         env:
-          TF_VAR_next_public_supabase_anon_key: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          TF_VAR_NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          TF_VAR_NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
         run: |
           if [ "${{ github.event.inputs.action }}" = "destroy" ]; then
             echo "Generating destroy plan..."
@@ -151,7 +152,8 @@ jobs:
         working-directory: terraform
         timeout-minutes: 15
         env:
-          TF_VAR_next_public_supabase_anon_key: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          TF_VAR_NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          TF_VAR_NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
         run: |
           if [ "${{ github.event.inputs.auto_approve }}" = "true" ]; then
             echo "Applying changes with auto-approve..."
@@ -167,7 +169,8 @@ jobs:
         working-directory: terraform
         timeout-minutes: 15
         env:
-          TF_VAR_next_public_supabase_anon_key: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          TF_VAR_NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          TF_VAR_NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
         run: |
           if [ "${{ github.event.inputs.auto_approve }}" = "true" ]; then
             echo " Destroying infrastructure with auto-approve..."
