@@ -1,44 +1,45 @@
 # Mindful Motion - Complete DevOps Infrastructure Project
 
+## Table of Contents
+- [Project Overview](#project-overview)
+- [Application Features](#application-features)
+- [Infrastructure Overview](#infrastructure-overview)
+- [Terraform State Management](#terraform-state-management)
+- [Architecture Diagram](#architecture-diagram)
+- [CI/CD Pipelines](#cicd-pipelines)
+- [Docker Implementation](#docker-implementation)
+- [Local Setup](#local-setup)
+- [Security Considerations](#security-considerations)
+- [Monitoring and Observability](#monitoring-and-observability)
+- [Support](#support)
+- [Author](#author)
 
-## 📑 Table of Contents
-- [🚀 Project Overview](#-project-overview)
-- [✨ Application Features](#-application-features)
-- [🏗️ Infrastructure Overview](#-infrastructure-overview)
-- [🗄️ Terraform State Management](#-terraform-state-management) 
-- [🏛️ Architecture Diagram](#-architecture-diagram)
-- [🔄 CI/CD Pipelines](#-cicd-pipelines)
-- [🐳 Docker Implementation](#-docker-implementation)
-- [🛠️ Local Setup](#-local-setup)
-- [🔐 Security Considerations](#-security-considerations)
-- [📊 Monitoring and Observability](#-monitoring-and-observability)
-- [📞 Support](#-support)
-- [👨‍💻 Author](#-author)
+## Project Overview
 
-## 🚀 Project Overview
+**Mindful Motion** is a comprehensive full-stack project that demonstrates both modern web application development and production-ready DevOps practices. This project showcases a Next.js application with AI-powered features (emotion analysis, daily check-ins) deployed on AWS with automated CI/CD pipelines.
 
-**Mindful Motion** is a comprehensive DevOps infrastructure project that demonstrates modern cloud architecture, CI/CD practices, and infrastructure automation. This project showcases a production-ready Next.js application deployed on AWS with automated deployment pipelines.
-
-## ✨ Application Features
+## Application Features
 
 ### Core Application
 - **Next.js 15** application with modern React patterns
-- **Emotion Analysis** using TensorFlow.js and Face API
-- **Daily Check-in System** for mental health tracking
-- **Responsive Design** optimized for mobile and desktop
+- **Facial Emotion Analysis** using face-api.js for real-time emotion detection
+- **Daily Check-in System** with custom NLP sentiment analysis and emotion detection algorithms
+- **Responsive Design** optimised for mobile and desktop
 - **Real-time Updates** with modern web technologies
 
-### 🎥 App Demo
-📹 **[Watch the App Features Demo](https://www.loom.com/share/cccc2c4bc8b44cf6a21888e03bd8baa1?sid=b28e5686-b5d7-46fc-883e-2d9f0a5a568e)** - See the daily check-in system, facial emotion analysis, and other features in action!
+### App Demos
+📹 **[App Features Demo](https://www.loom.com/share/cccc2c4bc8b44cf6a21888e03bd8baa1?sid=b28e5686-b5d7-46fc-883e-2d9f0a5a568e)** - See the daily check-in system, facial emotion analysis, and other features in action!
+
+📹 **[CI/CD Pipeline Demo](https://www.loom.com/share/a826cd56fc5d45ca9e537ba851f809b3?sid=251be87e-cca5-4c12-b6f3-522cd7c925a2)** - Watch the complete deployment process with security scanning and manual controls!
 
 ### Technical Stack
 - **Frontend:** Next.js 15, React, TypeScript
-- **AI/ML:** TensorFlow.js, Face API for emotion detection
+- **AI/ML:** face-api.js for facial emotion detection, custom NLP sentiment analysis
 - **Backend:** Supabase for authentication and database
 - **Styling:** Modern CSS with responsive design
 - **State Management:** React hooks and context
 
-## 🏗️ Infrastructure Overview
+## Infrastructure Overview
 
 ### Cloud Platform
 - **AWS** as the primary cloud provider
@@ -58,19 +59,19 @@
 - **VPC isolation** with proper network segmentation
 - **HTTPS enforcement** with automatic redirects
 
-## 🗄️ Terraform State Management
+## Terraform State Management
 
 ### Remote Backend Configuration
-- **S3 Backend** for centralized state storage in `eu-west-2`
+- **S3 Backend** for centralised state storage in `eu-west-2`
 - **State encryption** enabled for security compliance
-- **Centralized state management** for team collaboration
+- **Centralised state management** for team collaboration
 
 ### Benefits of Remote State
 - **Team collaboration** without state conflicts
-- **Centralized backup** and disaster recovery
+- **Centralised backup** and disaster recovery
 - **State consistency** across different environments
 
-## 🏛️ Architecture Diagram
+## Architecture Diagram
 
 ![Architecture Diagram](images/architecture-diagram.png)
 
@@ -87,14 +88,14 @@
 - **Application** → Supabase for backend services
 - **CI/CD** → Terraform → AWS infrastructure provisioning
 
-## 🔄 CI/CD Pipelines
+## CI/CD Pipelines
 
 ### GitHub Actions Workflows
 
 #### 1. CI Pipeline (`ci.yml`)
 - **Trigger:** Push to main branch
 - **Actions:**
-  - Build and optimize Docker image
+  - Build and optimise Docker image
   - Push to Amazon ECR
   - Run Trivy vulnerability scanning
   - Multi-stage builds for security
@@ -113,13 +114,13 @@
 - **Timeout limits** to prevent hanging workflows
 - **Environment protection** for production
 
-## 🐳 Docker Implementation
+## Docker Implementation
 
 ### Multi-Stage Build Strategy
 ```dockerfile
 # Build Stage
 FROM node:20-alpine AS builder
-# Build optimization and dependency installation
+# Build optimisation and dependency installation
 
 # Production Stage  
 FROM node:20-alpine AS production
@@ -128,11 +129,11 @@ FROM node:20-alpine AS production
 
 ### Best Practices Implemented
 
-#### 1. Image Size Optimization
+#### 1. Image Size Optimisation
 - **Next.js standalone output** eliminates `node_modules`
 - **Multi-stage builds** separate build and runtime
 - **Alpine Linux base** for minimal footprint
-- **Layer caching** optimization for faster builds
+- **Layer caching** optimisation for faster builds
 
 #### 2. Security Enhancements
 - **Non-root user** (`appuser`) for container security
@@ -140,24 +141,29 @@ FROM node:20-alpine AS production
 - **Minimal runtime dependencies** only
 - **Health checks** for container monitoring
 
+### Security Scanning in Action
+![Trivy Vulnerability Scan](images/trivy-scan-results.png)
+
+The image above shows Trivy detecting a HIGH severity vulnerability and blocking the ECR push, demonstrating the security-first approach.
+
 #### 3. Build Efficiency
 - **Dependency layer caching** for faster rebuilds
-- **Context optimization** with `.dockerignore`
-- **Optimized package installation**
+- **Context optimisation** with `.dockerignore`
+- **Optimised package installation**
 
 ### Image Size Results
-- **Before optimization:** 1.34GB
-- **After optimization:** 290MB
+- **Before optimisation:** 1.34GB
+- **After optimisation:** 290MB
 - **Size reduction:** **78% improvement** (from 1.34GB to 290MB)
 
-#### Visual Proof of Optimization
-**Before Optimization (1.34GB):**
+#### Visual Proof of Optimisation
+**Before Optimisation (1.34GB):**
 ![Before: Large Docker Image](images/before-optimization.png)
 
-**After Optimization (290MB):**
-![After: Optimized Docker Image](images/after-optimization.png)
+**After Optimisation (290MB):**
+![After: Optimised Docker Image](images/after-optimization.png)
 
-## 🛠️ Local Setup
+## Local Setup
 
 ### Prerequisites
 - **AWS CLI** configured with appropriate credentials
@@ -180,7 +186,7 @@ cp terraform.tfvars.example terraform.tfvars
 # Edit terraform.tfvars with your values
 ```
 
-#### 3. Initialize Terraform
+#### 3. Initialise Terraform
 ```bash
 terraform init
 terraform plan
@@ -213,9 +219,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
 Update `terraform.tfvars` with your values:
 - **AWS Region** (e.g., `eu-west-2`)
 - **Domain name** (if using custom domain)
-- **VPC CIDR blocks** (if customizing network)
+- **VPC CIDR blocks** (if customising network)
 
-## 🔐 Security Considerations
+## Security Considerations
 
 ### Secrets Management
 - **GitHub Secrets** for sensitive configuration
@@ -231,9 +237,9 @@ Update `terraform.tfvars` with your values:
 ### Container Security
 - **Non-root users** in containers
 - **Vulnerability scanning** with Trivy
-- **Minimal attack surface** with optimized images
+- **Minimal attack surface** with optimised images
 
-## 📊 Monitoring and Observability
+## Monitoring and Observability
 
 ### CloudWatch Integration
 - **ECS service logs** with simple logging
@@ -243,18 +249,17 @@ Update `terraform.tfvars` with your values:
 - **ALB health checks** for service availability
 - **Container health checks** for application status
 
-## 📞 Support
+## Support
 
 For questions or issues:
 - **Create an issue** in the GitHub repository
 - **Consult architecture** diagram for understanding
 
-
-## 👨‍💻 Author
+## Author
 
 **Yasin Hirsi**  
-- 🎓 BSc Computer Science (First Class) – Queen Mary University of London  
-- 💼 DevOps Engineer | AWS | Terraform | Docker | CI/CD  | Kubernetes
-- 🌐 [LinkedIn](https://www.linkedin.com/in/yhirsi) • [GitHub](https://github.com/Yasinhirsi) 
+- BSc Computer Science (First Class) – Queen Mary University of London  
+- DevOps Engineer | AWS | Terraform | Docker | CI/CD | Kubernetes
+- [LinkedIn](https://www.linkedin.com/in/yhirsi) • [GitHub](https://github.com/Yasinhirsi) 
 
 If you like this project, consider giving it a ⭐ to support!
