@@ -167,7 +167,7 @@ The image above shows Trivy detecting a HIGH severity vulnerability and blocking
 
 ### Prerequisites
 - **AWS CLI** configured with appropriate credentials
-- **Terraform** 1.11 or higher (for native s3 locking as dynamoDB no needed anymore)
+- **Terraform** 1.11 or higher (for native s3 locking as dynamoDB not needed anymore)
 - **Docker** and **Docker Compose** for local container testing
 - **Node.js** 18+ for local development
 
