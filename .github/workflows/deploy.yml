@@ -93,7 +93,6 @@ jobs:
           pip install checkov
           checkov -d terraform/ --framework terraform --output cli --compact --hard-fail-on CRITICAL
           echo "Checkov security scan completed"
-
   
   deploy:
     needs: validate
@@ -141,7 +140,7 @@ jobs:
         run: |
           if [ "${{ github.event.inputs.action }}" = "destroy" ]; then
             echo "Generating destroy plan..."
-            terraform plan -destroy -out=tfplan -input=false
+            terraform plan -destroy -out=tfplan -input=false -lock=false
           else
             echo "Generating apply plan..."
             terraform plan -out=tfplan -input=false
@@ -174,10 +173,10 @@ jobs:
         run: |
           if [ "${{ github.event.inputs.auto_approve }}" = "true" ]; then
             echo " Destroying infrastructure with auto-approve..."
-            terraform destroy -auto-approve
+            terraform destroy -auto-approve -lock=false
           else
             echo " Destroying infrastructure..."
-            terraform destroy
+            terraform destroy -lock=false
           fi
           echo " Infrastructure destruction completed"
       
