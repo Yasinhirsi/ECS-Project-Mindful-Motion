@@ -91,7 +91,7 @@ jobs:
         run: |
           echo "Running Checkov infrastructure security scan..."
           pip install checkov
-          checkov -d terraform/ --framework terraform --output cli --severity CRITICAL,HIGH
+          checkov -d terraform/ --framework terraform --output cli --hard-fail-on CRITICAL,HIGH
           echo "Checkov security scan completed"
 
   
