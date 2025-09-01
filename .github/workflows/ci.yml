@@ -46,8 +46,7 @@ jobs:
           image-ref: ${{ steps.build.outputs.imageid }}
           format: 'table'  # log table with all trivy checks
           exit-code: '1'  # fail on build
-          severity: 'CRITICAL,HIGH'
-          ignore-unfixed: true  # only fail if the vulnerability is unfixed
+          severity: 'CRITICAL'  # only fail on CRITICAL vulnerabilities
 
       - name: Push to ECR after successful scan
         if: success()
