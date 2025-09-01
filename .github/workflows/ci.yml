@@ -27,13 +27,14 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build and push Docker image
+      - name: Build Docker image
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: .
           file: Docker/Dockerfile
           platforms: linux/amd64
-          push: true
+          push: false  # scan first before pushing
           tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -42,8 +43,20 @@ jobs:
       - name: Run Trivy vulnerability scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+          image-ref: ${{ steps.build.outputs.imageid }}
           format: 'sarif'
           output: 'trivy-results.sarif'
-          exit-code: '0'  # Don't fail build 
+          exit-code: '1'  # Fail build if critical vulnerabilities found
+          severity: 'CRITICAL,HIGH'  # Only fail on critical/high severity
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Push to ECR after successful scan
+        if: success()
+        run: |
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+
 
