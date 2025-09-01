@@ -117,7 +117,7 @@ jobs:
           terraform_version: "1.12.2"
       
       - name: Require Manual Confirmation
-        if: github.event.inputs.action == 'apply' || github.event.inputs.action == 'destroy'
+        if: github.event.inputs.action == 'apply' && github.event.inputs.auto_approve != 'true'
         run: |
           if [ "${{ github.event.inputs.confirm_deployment }}" != "DEPLOY" ]; then
             echo "Deployment not confirmed!"
@@ -126,6 +126,14 @@ jobs:
             exit 1
           fi
           echo "Deployment confirmed for ${{ github.event.inputs.action }} to ${{ github.event.inputs.environment }}"
+
+      - name: Require Auto-approve for Destroy
+        if: github.event.inputs.action == 'destroy' && github.event.inputs.auto_approve != 'true'
+        run: |
+          echo "Destroy operations require auto-approve to prevent state lock issues!"
+          echo "Please check the 'Auto-approve changes' option when running destroy"
+          echo "This ensures the operation completes without manual confirmation"
+          exit 1
       
       - name: Terraform Init
         working-directory: terraform
@@ -140,7 +148,7 @@ jobs:
         run: |
           if [ "${{ github.event.inputs.action }}" = "destroy" ]; then
             echo "Generating destroy plan..."
-            terraform plan -destroy -out=tfplan -input=false -lock=false
+            terraform plan -destroy -out=tfplan -input=false
           else
             echo "Generating apply plan..."
             terraform plan -out=tfplan -input=false
@@ -173,13 +181,13 @@ jobs:
         run: |
           if [ "${{ github.event.inputs.auto_approve }}" = "true" ]; then
             echo " Destroying infrastructure with auto-approve..."
-            terraform destroy -auto-approve -lock=false
+            terraform destroy -auto-approve
           else
             echo " Destroying infrastructure..."
-            terraform destroy -lock=false
+            terraform destroy
           fi
           echo " Infrastructure destruction completed"
-      
+
       - name: Output ALB DNS
         if: github.event.inputs.action == 'apply'
         working-directory: terraform
