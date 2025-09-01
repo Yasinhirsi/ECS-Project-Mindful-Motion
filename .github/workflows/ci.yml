@@ -49,11 +49,6 @@ jobs:
           exit-code: '0'  # Temporarily set to 0 to see results
           severity: 'CRITICAL,HIGH'  # Only fail on critical/high severity
 
-      - name: Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: 'trivy-results.sarif'
-
       - name: Push to ECR after successful scan
         if: success()
         run: |
