@@ -34,13 +34,12 @@ env:
   AWS_REGION: eu-west-2
 
 jobs:
-  # Matrix job for linting and validation
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
       matrix:
-        tool: [fmt, validate, tflint]
+        tool: [fmt, validate, tflint, checkov]
     
     steps:
       - name: Checkout code
@@ -87,7 +86,15 @@ jobs:
           tflint --chdir=terraform
           echo "TFLint security checks completed"
 
-  # Main deployment job
+      - name: Run Checkov Security Scan
+        if: matrix.tool == 'checkov'
+        run: |
+          echo "Running Checkov infrastructure security scan..."
+          pip install checkov
+          checkov -d terraform/ --framework terraform --output cli --severity CRITICAL,HIGH
+          echo "Checkov security scan completed"
+
+  
   deploy:
     needs: validate
     runs-on: ubuntu-latest
