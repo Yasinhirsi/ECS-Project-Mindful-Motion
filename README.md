@@ -73,7 +73,7 @@
 
 ## Architecture Diagram
 
-![Architecture Diagram](images/architecture-diagram.png)
+![Architecture Diagram](images/new.gif)
 
 ### Architecture Components
 1. **CI/CD Pipeline:** GitHub Actions → Terraform → AWS
